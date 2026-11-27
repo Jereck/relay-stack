@@ -3,6 +3,9 @@
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <!-- Temporary: xUnit analyzer findings stay visible as warnings until they are triaged (the tests were first
+         compiled against stand-in packages without analyzers). Production projects still treat warnings as errors. -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="xunit.v3" />

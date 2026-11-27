@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RelayStack: your customers send files. Your app gets webhooks.</title>
+  <meta name="description" content="RelayStack gives each of your customers an inbox for CSV files. Every row is checked against your schema, and valid records reach your app as signed JSON webhooks.">
+  <meta property="og:title" content="RelayStack: your customers send files, your app gets webhooks">
+  <meta property="og:description" content="Managed file ingestion for developers. Row-level validation, signed webhooks, retries and replay.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /*
+      Waitlist: create a form at tally.so, then put its id (the part after tally.so/r/) in data-tally-form
+      on the #waitlist-form element below. Until then the page shows a note instead of the form.
+    */
+    :root {
+      --paper: #f4f7f3;
+      --bar: #e0ebe1;
+      --bar-edge: #cddccf;
+      --ink: #1d2a22;
+      --muted: #56665b;
+      --line: #c9d5cb;
+      --cobalt: #2547d0;
+      --cobalt-deep: #1b37a8;
+      --reject: #b8322b;
+      --reject-soft: #f8e3e0;
+      --surface: #ffffff;
+      --sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+      --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      --measure: 38rem;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { background: var(--paper); color: var(--ink); -webkit-text-size-adjust: 100%; }
+    body { margin: 0; font-family: var(--sans); font-size: 1.0625rem; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: var(--cobalt); text-underline-offset: 0.18em; }
+    a:hover { color: var(--cobalt-deep); }
+    :focus-visible { outline: 3px solid var(--cobalt); outline-offset: 3px; border-radius: 3px; }
+    code, pre { font-family: var(--mono); }
+
+    .wrap { width: min(72rem, 100% - 2.5rem); margin-inline: auto; }
+
+    /* Header */
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding-block: 1.5rem; }
+    .brand { display: inline-flex; align-items: center; gap: 0.6rem; font-weight: 600; font-size: 1.125rem; color: var(--ink); text-decoration: none; }
+    .brand svg { width: 1.6rem; height: 1.6rem; }
+    .button {
+      display: inline-block; padding: 0.7rem 1.15rem; border-radius: 6px; background: var(--cobalt); color: #fff;
+      font-weight: 500; font-size: 0.975rem; text-decoration: none; line-height: 1.2; border: 0; cursor: pointer;
+    }
+    .button:hover { background: var(--cobalt-deep); color: #fff; }
+    .button-quiet { background: transparent; color: var(--cobalt); box-shadow: inset 0 0 0 1.5px var(--cobalt); }
+    .button-quiet:hover { background: var(--cobalt); color: #fff; }
+
+    /* Hero */
+    .hero { padding-block: 3.5rem 4.5rem; }
+    .hero h1 {
+      margin: 0; max-width: 16ch; font-size: clamp(2.4rem, 5.4vw, 4.1rem); line-height: 1.04; font-weight: 600;
+      letter-spacing: -0.025em;
+    }
+    .hero .lede { max-width: var(--measure); margin: 1.5rem 0 2rem; font-size: 1.2rem; color: var(--muted); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+    .hero-actions small { color: var(--muted); font-size: 0.925rem; }
+
+    /* The transformation: a green-bar CSV feeding a signed webhook */
+    .relay {
+      margin: 3.5rem 0 0; display: grid; grid-template-columns: minmax(0, 1.05fr) auto minmax(0, 1fr);
+      align-items: center; gap: 0;
+    }
+    .sheet, .request { border-radius: 8px; overflow: hidden; font-family: var(--mono); font-size: 0.8125rem; line-height: 1.55; }
+    .sheet { background: var(--surface); border: 1px solid var(--bar-edge); box-shadow: 0 1px 0 var(--bar-edge); }
+    .sheet-title, .request-title {
+      display: flex; justify-content: space-between; gap: 1rem; padding: 0.6rem 1rem; font-family: var(--sans);
+      font-size: 0.85rem;
+    }
+    .sheet-title { border-bottom: 1px solid var(--bar-edge); color: var(--muted); }
+    .sheet-title strong, .request-title strong { font-weight: 500; color: var(--ink); }
+    /* Tractor-feed margins and green bars, as on continuous printer paper. */
+    .feed { position: relative; padding-inline: 2rem; }
+    .feed::before, .feed::after {
+      content: ""; position: absolute; top: 0; bottom: 0; width: 1.25rem;
+      background: radial-gradient(circle, var(--bar-edge) 0.22rem, transparent 0.26rem) center 0.35rem / 1.25rem 1.55rem repeat-y;
+    }
+    .feed::before { left: 0.35rem; }
+    .feed::after { right: 0.35rem; }
+    .rows { margin: 0; padding: 0; list-style: none; overflow-x: auto; }
+    .rows li { white-space: pre; padding: 0.2rem 0.75rem; }
+    .rows li:nth-child(odd) { background: var(--bar); }
+    .rows li.head { color: var(--muted); }
+    .rows li.rejected { background: var(--reject-soft); color: var(--reject); text-decoration: line-through; text-decoration-thickness: 1px; }
+    .verdict {
+      margin: 0; padding: 0.65rem 1rem; border-top: 1px solid var(--bar-edge); font-family: var(--sans); font-size: 0.875rem;
+      color: var(--reject);
+    }
+    .verdict b { font-weight: 600; }
+    .tally { margin: 0; padding: 0 1rem 0.75rem; font-family: var(--sans); font-size: 0.875rem; color: var(--muted); }
+
+    .arrow { display: grid; place-items: center; padding-inline: 0.9rem; color: var(--cobalt); }
+    .arrow svg { width: 2.25rem; height: 2.25rem; }
+
+    .request { background: #17221b; color: #dfe9e1; }
+    .request-title { border-bottom: 1px solid #2c3a31; color: #9fb3a5; }
+    .request-title strong { color: #f1f6f2; }
+    .request pre { margin: 0; padding: 0.9rem 1rem 1.1rem; overflow-x: auto; }
+    .request .k { color: #9fb3a5; }
+    .request .s { color: #b7d3ff; }
+    .request .n { color: #f3d58a; }
+    .request .ok { color: #8fd5a6; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .rows li.rejected { animation: flag 0.5s ease-out 0.9s both; }
+      .verdict { animation: show 0.4s ease-out 1.25s both; }
+      @keyframes flag { from { background: var(--bar); color: var(--ink); text-decoration-color: transparent; } }
+      @keyframes show { from { opacity: 0; } }
+    }
+
+    @media (max-width: 560px) {
+      .site-header .button { padding: 0.55rem 0.85rem; font-size: 0.9rem; }
+      .sheet, .request { font-size: 0.75rem; }
+      .sheet-title span { display: none; }
+      .feed { padding-inline: 0; }
+      .feed::before, .feed::after { display: none; }
+    }
+
+    @media (max-width: 860px) {
+      .relay { grid-template-columns: minmax(0, 1fr); }
+      .arrow { padding: 0.6rem 0; }
+      .arrow svg { transform: rotate(90deg); }
+    }
+
+    /* Content sections */
+    section.band { padding-block: 4.5rem; border-top: 1px solid var(--line); }
+    .band h2 { margin: 0 0 0.75rem; font-size: clamp(1.6rem, 3vw, 2.15rem); line-height: 1.15; font-weight: 600; letter-spacing: -0.015em; max-width: 30ch; }
+    .band .intro { max-width: var(--measure); margin: 0 0 2.75rem; color: var(--muted); }
+
+    .burdens { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.25rem 4rem; margin: 0; padding: 0; list-style: none; }
+    .burdens h3 { margin: 0 0 0.35rem; font-size: 1.075rem; font-weight: 600; }
+    .burdens p { margin: 0; color: var(--muted); max-width: 32rem; }
+
+    .steps { margin: 0; padding: 0; list-style: none; counter-reset: step; display: grid; gap: 2.75rem; }
+    .steps > li { counter-increment: step; display: grid; grid-template-columns: 3rem minmax(0, 22rem) minmax(0, 1fr); gap: 0 2rem; align-items: start; }
+    .steps > li::before {
+      content: counter(step); display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%;
+      background: var(--surface); box-shadow: inset 0 0 0 1.5px var(--cobalt); color: var(--cobalt); font-weight: 600;
+    }
+    .steps h3 { margin: 0.2rem 0 0.4rem; font-size: 1.15rem; font-weight: 600; }
+    .steps p { margin: 0; color: var(--muted); }
+    .snippet {
+      margin: 0; padding: 1rem 1.15rem; border-radius: 6px; background: var(--surface); border: 1px solid var(--line);
+      font-size: 0.8125rem; line-height: 1.6; overflow-x: auto; color: var(--ink);
+    }
+    .snippet .c { color: var(--muted); }
+
+    .next { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3rem; align-items: start; }
+    .next p { margin: 0 0 1rem; max-width: var(--measure); color: var(--muted); }
+    .next .snippet { margin-top: 0.25rem; }
+
+    .waitlist { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 3.5rem; align-items: start; }
+    .waitlist p { margin: 0 0 1rem; max-width: 30rem; color: var(--muted); }
+    .waitlist ul { margin: 0; padding-left: 1.1rem; color: var(--muted); }
+    .waitlist li { margin-bottom: 0.35rem; }
+    .form-slot { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 1.25rem; min-height: 14rem; }
+    .form-slot iframe { display: block; width: 100%; border: 0; }
+    .form-missing { margin: 0; color: var(--muted); font-size: 0.95rem; }
+
+    .site-footer { padding-block: 2.5rem 3rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+    .site-footer p { margin: 0; }
+
+    @media (max-width: 860px) {
+      .burdens, .next, .waitlist { grid-template-columns: minmax(0, 1fr); }
+      .steps > li { grid-template-columns: 2.75rem minmax(0, 1fr); gap: 0.25rem 1rem; }
+      .steps .snippet { grid-column: 2; margin-top: 1rem; }
+      .hero { padding-top: 2rem; }
+      section.band { padding-block: 3.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="wrap site-header">
+    <a class="brand" href="#top" aria-label="RelayStack home">
+      <svg viewBox="0 0 32 32" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 22 L12 10 L20 22 L28 10" />
+      </svg>
+      RelayStack
+    </a>
+    <a class="button button-quiet" href="#beta">Join the beta</a>
+  </header>
+
+  <main id="top">
+    <section class="wrap hero" aria-labelledby="hero-title">
+      <h1 id="hero-title">Your customers send files. Your app gets webhooks.</h1>
+      <p class="lede">
+        RelayStack gives each of your customers an inbox for CSV files. Every row is checked against your schema, and the
+        valid records reach your app as signed JSON webhooks, retried until they land and replayable afterwards.
+      </p>
+      <div class="hero-actions">
+        <a class="button" href="#beta">Join the private beta</a>
+        <small>For developers who receive recurring files from customers or partners.</small>
+      </div>
+
+      <figure class="relay" aria-label="Example: a timesheet CSV with one invalid row becomes a signed webhook containing the valid records">
+        <div class="sheet">
+          <div class="sheet-title"><strong>timesheets_2026-11-15.csv</strong><span>uploaded by Halden Payroll</span></div>
+          <div class="feed">
+            <ol class="rows">
+              <li class="head">employee_id,email,department,hours_worked,period_end</li>
+              <li>E1000,riley.quinn@example.com,FIN,40,2026-11-15</li>
+              <li>E1001,sam.rossi@example.com,ENG,42,2026-11-15</li>
+              <li class="rejected">E1002,taylor.lind@example.com,HR,forty,2026-11-15</li>
+              <li>E1003,jordan.park@example.com,OPS,38.5,2026-11-15</li>
+              <li>E1004,morgan.ellis@example.com,SUP,40,2026-11-15</li>
+              <li>E1005,alex.moreau@example.com,ENG,44,2026-11-15</li>
+              <li>E1006,casey.brandt@example.com,FIN,36,2026-11-15</li>
+            </ol>
+          </div>
+          <p class="verdict"><b>Row 4 rejected:</b> hours_worked must be a number, got “forty”.</p>
+          <p class="tally">1,240 rows received: 1,239 delivered, 1 rejected.</p>
+        </div>
+
+        <div class="arrow" aria-hidden="true">
+          <svg viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 18 H30 M21 9 L30 18 L21 27" />
+          </svg>
+        </div>
+
+        <div class="request">
+          <div class="request-title"><strong>POST https://your-app.example/webhooks</strong><span class="ok">204</span></div>
+<pre><span class="k">webhook-id:</span> 01936f2e-7a41-7c3d-9e20-5b8f0c1d4a67
+<span class="k">webhook-timestamp:</span> 1763186400
+<span class="k">webhook-signature:</span> v1,K5oZfzN95Z9UVu1EsfQmfVNQhnkZ2pj9o9…
+
+{
+  <span class="k">"type":</span> <span class="s">"inbox.file.records"</span>,
+  <span class="k">"data":</span> {
+    <span class="k">"file_name":</span> <span class="s">"timesheets_2026-11-15.csv"</span>,
+    <span class="k">"record_count":</span> <span class="n">500</span>,
+    <span class="k">"records":</span> [
+      { <span class="k">"employee_id":</span> <span class="s">"E1000"</span>, <span class="k">"hours_worked":</span> <span class="n">40</span>, … },
+      { <span class="k">"employee_id":</span> <span class="s">"E1001"</span>, <span class="k">"hours_worked":</span> <span class="n">42</span>, … },
+      { <span class="k">"employee_id":</span> <span class="s">"E1003"</span>, <span class="k">"hours_worked":</span> <span class="n">38.5</span>, … },
+      …
+    ]
+  }
+}</pre>
+        </div>
+      </figure>
+    </section>
+
+    <section class="band" aria-labelledby="burden-title">
+      <div class="wrap">
+        <h2 id="burden-title">The plumbing you don’t have to build</h2>
+        <p class="intro">
+          Taking a file from a customer sounds like an afternoon. It turns into a queue, a parser, retry logic, a replay
+          tool and an audit trail, none of which is your product.
+        </p>
+        <ul class="burdens">
+          <li>
+            <h3>A place for files to land</h3>
+            <p>Each customer gets an inbox they can upload to over HTTPS. SFTP is next.</p>
+          </li>
+          <li>
+            <h3>Parsing that survives real exports</h3>
+            <p>Files are streamed with hard limits on size, row length and column count, so a huge or broken export can’t take your service down.</p>
+          </li>
+          <li>
+            <h3>Errors your customers can fix</h3>
+            <p>Every rejected row comes back with its row number and a plain reason. The valid rows still go through.</p>
+          </li>
+          <li>
+            <h3>Delivery you don’t have to watch</h3>
+            <p>Webhooks are retried with backoff when your endpoint is down, parked when retries run out, and replayed with one click.</p>
+          </li>
+          <li>
+            <h3>Duplicates that are easy to drop</h3>
+            <p>Delivery is at-least-once. Each batch keeps the same webhook-id across retries and replays, so your handler can ignore repeats.</p>
+          </li>
+          <li>
+            <h3>A record of what happened</h3>
+            <p>Every file, record batch and delivery attempt is logged and visible in a dashboard, and every webhook is signed so you know it came from RelayStack.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="how-title">
+      <div class="wrap">
+        <h2 id="how-title">How it works</h2>
+        <p class="intro">You set up the inbox once and handle the webhooks. Your customers only ever see an upload address.</p>
+        <ol class="steps">
+          <li>
+            <div>
+              <h3>Describe the file</h3>
+              <p>Create an inbox with the columns you expect, their types, and where valid records should go.</p>
+            </div>
+<pre class="snippet">POST /v1/inboxes
+{
+  "name": "timesheets",
+  "destination_id": "<span class="c">your webhook endpoint</span>",
+  "schema": { "columns": [
+    { "name": "employee_id", "type": "string", "required": true },
+    { "name": "hours_worked", "type": "decimal", "required": true },
+    { "name": "period_end", "type": "date", "required": true }
+  ] }
+}</pre>
+          </li>
+          <li>
+            <div>
+              <h3>Give your customer the upload address</h3>
+              <p>They upload whenever their system exports. Uploads are idempotent, so a retried upload never creates a duplicate.</p>
+            </div>
+<pre class="snippet">POST /v1/inboxes/<span class="c">{inbox_id}</span>/files
+Content-Type: text/csv
+Idempotency-Key: halden-2026-11-15
+
+<span class="c">(the CSV, streamed as the request body)</span></pre>
+          </li>
+          <li>
+            <div>
+              <h3>Handle the webhooks</h3>
+              <p>Verify the signature, process the records, return a 2xx. Rejected rows are listed against the file for you or your customer to review.</p>
+            </div>
+<pre class="snippet">webhook-signature: v1,base64(
+  HMAC-SHA256(secret, "{id}.{timestamp}.{body}")
+)
+
+<span class="c">Return 2xx when processed. Anything else is retried.</span></pre>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="band" aria-labelledby="next-title">
+      <div class="wrap next">
+        <div>
+          <h2 id="next-title">After files: APIs that never got webhooks</h2>
+          <p>
+            Some systems only offer an API you have to keep asking. RelayStack will poll it on a schedule, compare what it
+            sees with last time, and send you only the records that are new or changed, through the same signed,
+            retried delivery.
+          </p>
+        </div>
+<pre class="snippet"><span class="c">Every 15 minutes:</span>
+GET https://legacy-hr.example/api/employees
+
+poll.record.created   E1004  Morgan Ellis
+poll.record.updated   E1001  department ENG → OPS</pre>
+      </div>
+    </section>
+
+    <section class="band" id="beta" aria-labelledby="beta-title">
+      <div class="wrap waitlist">
+        <div>
+          <h2 id="beta-title">Join the private beta</h2>
+          <p>
+            RelayStack is in development. The first version is for small teams who already receive files on a schedule and
+            would rather not run the pipeline themselves.
+          </p>
+          <p>The form asks three things:</p>
+          <ul>
+            <li>What files arrive today, and in what format</li>
+            <li>Who sends them: customers, partners or another system</li>
+            <li>Roughly how often, and how large they are</li>
+          </ul>
+        </div>
+        <div class="form-slot" id="waitlist-form" data-tally-form="">
+          <p class="form-missing">The signup form isn’t connected yet.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap site-footer">
+    <p>RelayStack is a working name for a product in development. © 2026</p>
+  </footer>
+
+  <script>
+    // Loads the Tally form only when a form id is configured, so no third-party script runs otherwise.
+    (function () {
+      var slot = document.getElementById("waitlist-form");
+      var id = (slot.getAttribute("data-tally-form") || "").trim();
+      if (!/^[A-Za-z0-9]+$/.test(id)) return;
+      var frame = document.createElement("iframe");
+      frame.setAttribute("data-tally-src", "https://tally.so/embed/" + id + "?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1");
+      frame.setAttribute("title", "Join the RelayStack private beta");
+      frame.setAttribute("loading", "lazy");
+      frame.height = 420;
+      slot.replaceChildren(frame);
+      var script = document.createElement("script");
+      script.src = "https://tally.so/widgets/embed.js";
+      script.onload = function () { if (window.Tally) window.Tally.loadEmbeds(); };
+      document.body.appendChild(script);
+    })();
+  </script>
+</body>
+</html>

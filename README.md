@@ -55,17 +55,18 @@ docs/                       Product, architecture, security, delivery semantics,
 Phase 0 was built where NuGet and Docker Hub could not be reached. To test anyway, EF Core 10.0.15, Npgsql 10.0.4
 and the Npgsql EF provider were built from their GitHub source tags. Small local stand-ins replaced xUnit (a
 reflection runner) and Testcontainers (a fresh database on a local Postgres 16). The repository references the normal
-nuget.org packages; the stand-ins are not committed.
+nuget.org packages; the stand-ins are not committed. Since then the real packages have been used in GitHub Actions and
+in a local `docker compose` run.
 
 | Area | Status |
 |---|---|
 | Platform library, API, worker, dev receiver, samples | Built and run against real EF Core/Npgsql and Postgres 16 |
-| 102 unit tests, 29 integration tests | Pass with the stand-in runner. **Not yet run with real xUnit v3 and Testcontainers.** |
+| 102 unit tests, 29 integration tests | Pass in GitHub Actions with real xUnit v3 and Testcontainers (Postgres 17) |
 | curl walkthrough and C# samples | Run end to end against API, worker and receiver started as separate processes |
 | Dashboard | `npm run build` passes; checked in Chrome against the live stack, desktop and mobile widths |
-| `docker compose` and Dockerfile | `docker compose config` validates. **Images not built here** (registries unreachable). |
-| OpenTelemetry and OpenAPI wiring | Compiles against local stand-ins only. **Unverified.** |
-| GitHub Actions workflow | Written, not run |
+| `docker compose` and Dockerfile | Images built and the walkthrough run end to end with `docker compose` on macOS |
+| OpenTelemetry and OpenAPI wiring | Compiles against the real packages. **Trace export and the generated OpenAPI document not yet checked.** |
+| GitHub Actions workflow | Green: build, unit and integration tests, dashboard build, Compose config; landing page deploys to Pages |
 | AWS CDK stack | Design only ([docs/AWS_INTEGRATION_PLAN.md](docs/AWS_INTEGRATION_PLAN.md)); nothing provisioned |
 
 First thing to do on a normal machine: `dotnet test RelayStack.slnx` and `docker compose up --build`.

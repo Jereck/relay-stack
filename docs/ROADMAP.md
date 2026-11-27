@@ -39,9 +39,9 @@ real EF Core, Npgsql and Postgres. These checks used local stand-ins for xUnit a
 
 ## Immediate next steps
 
-1. Run `dotnet test` with real xUnit v3 and Testcontainers, build the Compose images, and commit the generated
-   `openapi.json`. Fix whatever the stand-ins hid.
-2. Push to GitHub and get CI green.
+1. ~~Run the real xUnit v3 and Testcontainers suites, build the Compose images, get CI green~~ Done (102 unit and
+   29 integration tests pass in CI). Still to do: commit the generated `openapi.json` and check trace export.
+2. Test demand with the landing page and waitlist before Phase 1 (see the go/no-go bar agreed for the beta).
 3. S3 `IObjectStore` implementation tested against SeaweedFS and one real bucket.
 4. Hard per-tenant concurrency (semaphore rows) and per-tenant quotas from usage records.
 5. Security review of RLS (including the `worker_claim_*` functions), the SSRF client and authentication.

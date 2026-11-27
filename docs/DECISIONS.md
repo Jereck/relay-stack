@@ -69,7 +69,7 @@ dedupe keys. **Result.** It needed no changes to delivery code, only a new event
 engine is input-agnostic.
 
 ## ADR-013 Reconciliation with the research report
-**Context.** `docs/research/RelayStack — Market, Product & Technical Research Report.pdf` (Nov 26, 2026) proposes
+**Context.** The private market, product and technical research report (Nov 26, 2026; kept outside this repository) proposes
 the Inbox wedge, Poll as the second input on the same engine, and a v1 architecture. Phase 0 follows its direction
 but not every assumption.
 

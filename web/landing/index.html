@@ -6,6 +6,8 @@
   <title>RelayStack: your customers send files. Your app gets webhooks.</title>
   <meta name="description" content="RelayStack gives each of your customers an inbox for CSV files. Every row is checked against your schema, and valid records reach your app as signed JSON webhooks.">
   <meta property="og:title" content="RelayStack: your customers send files, your app gets webhooks">
+  <!-- Analytics: put your GoatCounter code (the "yourcode" in yourcode.goatcounter.com) in content. Empty = no analytics. -->
+  <meta name="goatcounter" content="">
   <meta property="og:description" content="Managed file ingestion for developers. Row-level validation, signed webhooks, retries and replay.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -391,6 +393,28 @@ poll.record.updated   E1001  department ENG → OPS</pre>
       script.src = "https://tally.so/widgets/embed.js";
       script.onload = function () { if (window.Tally) window.Tally.loadEmbeds(); };
       document.body.appendChild(script);
+    })();
+
+    // Cookie-free visit counting with GoatCounter, plus one event per completed beta signup.
+    (function () {
+      var meta = document.querySelector('meta[name="goatcounter"]');
+      var code = meta ? (meta.getAttribute("content") || "").trim() : "";
+      if (!/^[a-z0-9-]+$/.test(code)) return;
+      var gc = document.createElement("script");
+      gc.async = true;
+      gc.src = "https://gc.zgo.at/count.js";
+      gc.setAttribute("data-goatcounter", "https://" + code + ".goatcounter.com/count");
+      document.body.appendChild(gc);
+
+      window.addEventListener("message", function (e) {
+        if (e.origin !== "https://tally.so") return;
+        var data = e.data;
+        if (typeof data === "string") { try { data = JSON.parse(data); } catch (_) { return; } }
+        if (!data || data.event !== "Tally.FormSubmitted") return;
+        if (window.goatcounter && window.goatcounter.count) {
+          window.goatcounter.count({ path: "beta-signup", title: "Beta signup", event: true });
+        }
+      });
     })();
   </script>
 </body>

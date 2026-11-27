@@ -26,7 +26,7 @@ All inputs share one **reliable event delivery engine**. Phase 0 exists to prove
 
 ## First commercial candidates
 
-**Inbox** and **Poll**. The research report (`docs/research/`) recommends Inbox as the wedge: "our customer or
+**Inbox** and **Poll**. The private research report recommends Inbox as the wedge: "our customer or
 partner can only send us files over SFTP, and we have to turn them into clean records in our app." Its differentiators
 are records rather than files, everything on the cheapest paid plan, per-customer inboxes by API and legacy-friendly
 parsing. Poll is the second input type on the same engine, and the report proposes demand tests for both before

@@ -14,3 +14,6 @@ web/dashboard/dist/
 !.env.example
 .data/
 cdk.out/
+
+# Private business research, kept locally only
+docs/research/

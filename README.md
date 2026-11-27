@@ -72,8 +72,8 @@ First thing to do on a normal machine: `dotnet test RelayStack.slnx` and `docker
 
 ## Research
 
-The market and technical research that motivated this phase is in
-[docs/research/](docs/research/). Phase 0 follows its recommended wedge (Inbox first, Poll second, one delivery
+The market and technical research that motivated this phase is kept privately and is not part of this
+repository. Phase 0 follows its recommended wedge (Inbox first, Poll second, one delivery
 engine) and records where it deliberately differs in [ADR-013](docs/DECISIONS.md#adr-013-reconciliation-with-the-research-report).
 
 ## Documentation
@@ -90,3 +90,7 @@ engine) and records where it deliberately differs in [ADR-013](docs/DECISIONS.md
 [Decisions (ADRs)](docs/DECISIONS.md) ·
 [Risks](docs/RISKS.md) ·
 [Development](docs/DEVELOPMENT.md)
+
+## License
+
+All rights reserved. The source is published to be read, not reused. See [LICENSE](LICENSE).

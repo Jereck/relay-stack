@@ -1,0 +1,14 @@
+{
+  "unknown_columns": "ignore",
+  "columns": [
+    { "name": "employee_id", "type": "string", "required": true, "max_length": 16 },
+    { "name": "email", "type": "email", "required": true },
+    { "name": "full_name", "type": "string", "required": true, "max_length": 200 },
+    { "name": "department", "type": "string", "required": true, "allowed_values": ["ENG", "OPS", "FIN", "SUP", "HR"] },
+    { "name": "hours_worked", "type": "decimal", "required": true },
+    { "name": "hourly_rate", "type": "decimal", "required": true },
+    { "name": "period_start", "type": "date", "required": true },
+    { "name": "period_end", "type": "date", "required": true },
+    { "name": "overtime", "type": "boolean" }
+  ]
+}

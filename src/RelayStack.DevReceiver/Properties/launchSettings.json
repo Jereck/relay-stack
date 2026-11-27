@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "RelayStack.DevReceiver": {
+      "commandName": "Project",
+      "applicationUrl": "http://localhost:8090",
+      "environmentVariables": { "ASPNETCORE_ENVIRONMENT": "Development" }
+    }
+  }
+}

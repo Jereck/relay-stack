@@ -1,0 +1,2 @@
+employee_id,email,full_name,department,hours_worked,hourly_rate,period_start,period_end,overtime
+E1,a@example.com,"Unterminated quote,ENG,40,30.00,2026-11-02,2026-11-15,false

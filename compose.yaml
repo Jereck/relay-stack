@@ -1,0 +1,86 @@
+# Local development environment. Nothing here is suitable for production.
+#   docker compose up --build
+# API: http://localhost:8080   Dev receiver: http://localhost:8090   Dashboard: http://localhost:5173
+name: relaystack
+
+x-dev-secrets: &dev-secrets
+  # Public, development-only values (see src/RelayStack.Platform/DevelopmentDefaults.cs).
+  RelayStack__Security__ApiKeyPepper: "w1gPP58Ge2LuuO+LkzUBOQN4m9FRqM5QcFowPMfnMXs="
+  RelayStack__Security__EncryptionKeys__1: "DKJD0LSsdsIahStQhcuHmmtUAtLa0OxIsdnTCQWvgWQ="
+  RelayStack__Security__CurrentEncryptionKeyId: "1"
+  RelayStack__Storage__RootPath: /data/objects
+  RelayStack__Delivery__DevelopmentReceiverAllowlist__0: "dev-receiver:8080"
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres_dev_password
+    ports: ["127.0.0.1:5434:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./deploy/postgres/init.sql:/docker-entrypoint-initdb.d/00-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d relaystack"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  migrate:
+    build: { context: ., dockerfile: deploy/Dockerfile, args: { PROJECT: RelayStack.Api } }
+    command: ["migrate"]
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Owner: "Host=postgres;Database=relaystack;Username=relaystack_owner;Password=owner_dev_password"
+      <<: *dev-secrets
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  api:
+    build: { context: ., dockerfile: deploy/Dockerfile, args: { PROJECT: RelayStack.Api } }
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__App: "Host=postgres;Database=relaystack;Username=relaystack_app;Password=app_dev_password"
+      ConnectionStrings__Owner: "Host=postgres;Database=relaystack;Username=relaystack_owner;Password=owner_dev_password"
+      Cors__AllowedOrigins__0: "http://localhost:5173"
+      <<: *dev-secrets
+    ports: ["127.0.0.1:8080:8080"]
+    volumes: [objects:/data/objects]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+
+  worker:
+    build: { context: ., dockerfile: deploy/Dockerfile, args: { PROJECT: RelayStack.Worker } }
+    environment:
+      DOTNET_ENVIRONMENT: Development
+      ConnectionStrings__Worker: "Host=postgres;Database=relaystack;Username=relaystack_worker;Password=worker_dev_password"
+      RelayStack__Delivery__RetryBaseDelaySeconds: "2"
+      RelayStack__Delivery__RetryMaxDelaySeconds: "60"
+      <<: *dev-secrets
+    volumes: [objects:/data/objects]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+
+  dev-receiver:
+    build: { context: ., dockerfile: deploy/Dockerfile, args: { PROJECT: RelayStack.DevReceiver } }
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+    ports: ["127.0.0.1:8090:8080"]
+
+  dashboard:
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0"
+    environment:
+      VITE_API_BASE_URL: http://localhost:8080
+    ports: ["127.0.0.1:5173:5173"]
+    volumes:
+      - ./web/dashboard:/app
+      - dashboard_node_modules:/app/node_modules
+    profiles: ["dashboard"]
+
+volumes:
+  pgdata:
+  objects:
+  dashboard_node_modules:

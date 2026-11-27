@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RelayStack.Worker": {
+      "commandName": "Project",
+      "environmentVariables": { "DOTNET_ENVIRONMENT": "Development" }
+    }
+  }
+}

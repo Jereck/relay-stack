@@ -1,0 +1,16 @@
+bin/
+obj/
+*.user
+.vs/
+.idea/
+.vscode/
+*.swp
+.DS_Store
+TestResults/
+node_modules/
+web/dashboard/dist/
+.env
+.env.*
+!.env.example
+.data/
+cdk.out/

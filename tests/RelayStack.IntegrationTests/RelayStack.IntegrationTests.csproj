@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Testcontainers.PostgreSql" />
+  </ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="../../src/RelayStack.Platform/RelayStack.Platform.csproj" />
+    <ProjectReference Include="../../src/RelayStack.Api/RelayStack.Api.csproj" />
+    <ProjectReference Include="../../src/RelayStack.Worker/RelayStack.Worker.csproj" />
+    <ProjectReference Include="../../src/RelayStack.DevReceiver/RelayStack.DevReceiver.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="../../samples/data/*" Link="samples/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+</Project>

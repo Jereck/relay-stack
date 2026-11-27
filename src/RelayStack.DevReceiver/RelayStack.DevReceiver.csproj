@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <!-- Development-only webhook sink and synthetic polling API. Must never be deployed. -->
+  <ItemGroup>
+    <ProjectReference Include="../RelayStack.Platform/RelayStack.Platform.csproj" />
+  </ItemGroup>
+</Project>

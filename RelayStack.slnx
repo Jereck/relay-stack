@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/samples/" />
+  <Folder Name="/samples/csharp/">
+    <Project Path="samples/csharp/RelayStack.Samples.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/RelayStack.Api/RelayStack.Api.csproj" />
+    <Project Path="src/RelayStack.DevReceiver/RelayStack.DevReceiver.csproj" />
+    <Project Path="src/RelayStack.Platform/RelayStack.Platform.csproj" />
+    <Project Path="src/RelayStack.Worker/RelayStack.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RelayStack.IntegrationTests/RelayStack.IntegrationTests.csproj" />
+    <Project Path="tests/RelayStack.UnitTests/RelayStack.UnitTests.csproj" />
+  </Folder>
+</Solution>

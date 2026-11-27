@@ -1,0 +1,42 @@
+employee_id,email,full_name,department,hours_worked,hourly_rate,period_start,period_end,overtime
+E1000,kai.nguyen0@example.com,Kai Nguyen,FIN,32,66.20,2026-11-02,2026-11-15,false
+E1001,emerson.rivera1@example.com,Emerson Rivera,FIN,36,53.25,2026-11-02,2026-11-15,false
+E1002,rowan.moreau2@example.com,Rowan Moreau,HR,37.5,40.67,2026-11-02,2026-11-15,false
+E1003,casey.kowalski3@example.com,Casey Kowalski,FIN,42,29.22,2026-11-02,2026-11-15,false
+E1004,sam.haddad4@example.com,Sam Haddad,HR,42,58.04,2026-11-02,2026-11-15,false
+E1005,not-an-email,Casey Larsen,ENG,42,50.48,2026-11-02,2026-11-15,true
+E1006,harper.haddad6@example.com,Harper Haddad,OPS,40,41.14,2026-11-02,2026-11-15,false
+E1007,taylor.lindqvist7@example.com,Taylor Lindqvist,OPS,37.5,26.32,2026-11-02,2026-11-15,true
+E1008,sage.rossi8@example.com,Sage Rossi,HR,32,59.07,2026-11-02,2026-11-15,false
+E1009,casey.mendez9@example.com,Casey Mendez,SUP,37.5,31.09,2026-11-02,2026-11-15,false
+E1010,cameron.okafor10@example.com,Cameron Okafor,SUP,32,45.01,2026-11-02,2026-11-15,false
+E1011,quinn.fischer11@example.com,Quinn Fischer,HR,forty,64.13,2026-11-02,2026-11-15,false
+E1012,quinn.rossi12@example.com,Quinn Rossi,OPS,40,76.07,2026-11-02,2026-11-15,false
+E1013,taylor.kowalski13@example.com,Taylor Kowalski,HR,45,47.85,2026-11-02,2026-11-15,false
+E1014,kai.larsen14@example.com,Kai Larsen,HR,42,76.11,2026-11-02,2026-11-15,true
+E1015,cameron.patel15@example.com,Cameron Patel,FIN,32,57.91,2026-11-02,2026-11-15,false
+E1016,skyler.chen16@example.com,Skyler Chen,HR,36,37.96,2026-11-02,2026-11-15,true
+E1017,drew.fischer17@example.com,Drew Fischer,MKT,37.5,68.54,2026-11-02,2026-11-15,true
+E1018,quinn.fischer18@example.com,Quinn Fischer,FIN,32,45.23,2026-11-02,2026-11-15,false
+E1019,sage.kowalski19@example.com,Sage Kowalski,OPS,42,77.69,2026-11-02,2026-11-15,false
+E1020,quinn.quinn20@example.com,Quinn Quinn,FIN,36,68.99,2026-11-02,2026-11-15,false
+E1021,emerson.patel21@example.com,Emerson Patel,OPS,32,38.07,2026-11-02,2026-11-15,false
+E1022,casey.ibrahim22@example.com,Casey Ibrahim,SUP,32,72.73,2026-11-02,2026-11-15,true
+,drew.novak23@example.com,Drew Novak,OPS,42,28.23,2026-11-02,2026-11-15,false
+E1024,quinn.haddad24@example.com,Quinn Haddad,ENG,32,35.35,2026-11-02,2026-11-15,false
+E1025,cameron.fischer25@example.com,Cameron Fischer,ENG,36,68.85,2026-11-02,2026-11-15,false
+E1026,cameron.rossi26@example.com,Cameron Rossi,ENG,40,62.24,2026-11-02,2026-11-15,false
+E1027,logan.quinn27@example.com,Logan Quinn,HR,40,35.47,2026-11-02,2026-11-15,false
+E1028,morgan.rivera28@example.com,Morgan Rivera,HR,40,25.79,2026-11-02,2026-11-15,false
+E1029,skyler.larsen29@example.com,Skyler Larsen,HR,32,43.87,11/02/2026,2026-11-15,false
+E1030,jordan.silva30@example.com,Jordan Silva,FIN,40,63.85,2026-11-02,2026-11-15,false
+E1031,sam.kowalski31@example.com,"Rowan ""RJ"" Mendez, Jr.",OPS,36,65.20,2026-11-02,2026-11-15,false
+E1032,emerson.patel32@example.com,Emerson Patel,ENG,40,52.58,2026-11-02,2026-11-15,false
+E1033,morgan.fischer33@example.com,Morgan Fischer,SUP,37.5,67.44,2026-11-02,2026-11-15,true
+E1034,parker.blake34@example.com,Parker Blake,FIN,40,24.45,2026-11-02,2026-11-15,true
+E1035,jordan.tanaka35@example.com,Jordan Tanaka,FIN,42,77.39,2026-11-02,2026-11-15,false
+E1036,reese.moreau36@example.com,Reese Moreau,ENG,40,38.02,2026-11-02,2026-11-15,true
+E1037,emerson.moreau37@example.com,Emerson Moreau,ENG,40,46.47,2026-11-02,2026-11-15,false
+E1038,parker.silva38@example.com,Parker Silva,FIN,37.5,49.79,2026-11-02,2026-11-15,false
+E1039,harper.larsen39@example.com,Harper Larsen,FIN,36,62.72,2026-11-02,2026-11-15,true
+E9999,short@example.com

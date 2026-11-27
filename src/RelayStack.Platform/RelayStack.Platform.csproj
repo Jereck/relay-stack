@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The modular monolith: all domain modules live here, organised by folder. Hosts (Api, Worker) are thin. -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Persistence/Migrations/*.sql" LogicalName="RelayStack.Migrations.%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="RelayStack.UnitTests" />
+    <InternalsVisibleTo Include="RelayStack.IntegrationTests" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <UserSecretsId>relaystack-api</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../RelayStack.Platform/RelayStack.Platform.csproj" />
+    <Compile Include="../Shared/Observability.cs" Link="Observability.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="RelayStack.IntegrationTests" />
+  </ItemGroup>
+</Project>
